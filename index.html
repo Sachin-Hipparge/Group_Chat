@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Signup & Login</title>
+
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+
+    <div class="container">
+
+        <!-- Signup Section -->
+        <div id="signup-section" class="form-container">
+
+            <h1>Sign Up</h1>
+
+            <form id="signup-form">
+
+                <div class="input-group">
+                    <label for="signup-name">Name</label>
+                    <input
+                        type="text"
+                        id="signup-name"
+                        placeholder="Enter your name"
+                        required
+                    >
+                </div>
+
+                <div class="input-group">
+                    <label for="signup-email">Email</label>
+                    <input
+                        type="email"
+                        id="signup-email"
+                        placeholder="Enter your email"
+                        required
+                    >
+                </div>
+
+                <div class="input-group">
+                    <label for="signup-phone">Phone Number</label>
+                    <input
+                        type="tel"
+                        id="signup-phone"
+                        placeholder="Enter your phone number"
+                        required
+                    >
+                </div>
+
+                <div class="input-group">
+                    <label for="signup-password">Password</label>
+                    <input
+                        type="password"
+                        id="signup-password"
+                        placeholder="Enter your password"
+                        required
+                    >
+                </div>
+
+                <button type="submit">Sign Up</button>
+
+            </form>
+
+            <p>
+                Already have an account?
+                <a href="#" id="show-login">Login</a>
+            </p>
+
+        </div>
+
+
+        <!-- Login Section -->
+        <div id="login-section" class="form-container hidden">
+
+            <h1>Login</h1>
+
+            <form id="login-form">
+
+                <div class="input-group">
+                    <label for="login-user">Email or Phone Number</label>
+                    <input
+                        type="text"
+                        id="login-user"
+                        placeholder="Enter email or phone number"
+                        required
+                    >
+                </div>
+
+                <div class="input-group">
+                    <label for="login-password">Password</label>
+                    <input
+                        type="password"
+                        id="login-password"
+                        placeholder="Enter your password"
+                        required
+                    >
+                </div>
+
+                <button type="submit">Login</button>
+
+            </form>
+
+            <p>
+                Don't have an account?
+                <a href="#" id="show-signup">Sign Up</a>
+            </p>
+
+        </div>
+
+    </div>
+
+    <script src="script.js"></script>
+
+</body>
+</html>
