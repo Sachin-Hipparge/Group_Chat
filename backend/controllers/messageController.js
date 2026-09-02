@@ -39,7 +39,31 @@ const sendMessage = async (req, res) => {
     }
 };
 
+const getMessages = async (req, res) => {
+
+    try {
+
+        const [messages] = await db.promise().execute(
+            "SELECT id, user_id, message, createdAt FROM messages ORDER BY createdAt ASC"
+        );
+
+
+        return res.status(200).json({
+            messages: messages
+        });
+
+    } catch (error) {
+
+        console.error("Get messages error:", error);
+
+        return res.status(500).json({
+            message: "Internal server error"
+        });
+    }
+};
+
 
 module.exports = {
-    sendMessage
+    sendMessage,
+    getMessages
 };
