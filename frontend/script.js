@@ -167,10 +167,9 @@ loginForm.addEventListener("submit", async function (event) {
 
 
         // Save JWT token
-        localStorage.setItem("token", data.token);
+localStorage.setItem("token", data.token);
 
-
-        alert("Login successful!");
+window.location.href = "chat.html";
 
         loginForm.reset();
 

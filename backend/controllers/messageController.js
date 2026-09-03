@@ -23,6 +23,19 @@ const sendMessage = async (req, res) => {
             [userId, message.trim()]
         );
 
+        const [savedMessage] = await db.promise().execute(
+    "SELECT id, user_id, message, createdAt FROM messages WHERE id = ?",
+    [result.insertId]
+);
+
+const wss = req.app.get("wss");
+
+wss.clients.forEach((client) => {
+    if (client.readyState === 1) {
+        client.send(JSON.stringify(savedMessage[0]));
+    }
+});
+
 
         return res.status(201).json({
             message: "Message sent successfully",
