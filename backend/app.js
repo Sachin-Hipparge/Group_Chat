@@ -4,7 +4,9 @@ dotenv.config();
 const express = require("express");
 const cors = require("cors");
 const http = require("http");
-const WebSocket = require("ws");
+
+
+const { Server } = require("socket.io");
 
 const authRoutes = require("./routes/authRoutes");
 const messageRoutes = require("./routes/messageRoutes");
@@ -22,20 +24,22 @@ const PORT = 5000;
 // Create HTTP server
 const server = http.createServer(app);
 
-// Create WebSocket server
-const wss = new WebSocket.Server({ server });
+const io = new Server(server, {
+    cors: {
+        origin: "*"
+    }
+});
 
-app.set("wss", wss);
+app.set("io", io);
 
-wss.on("connection", (socket) => {
-    console.log("WebSocket client connected");
+io.on("connection", (socket) => {
+    console.log("Socket.IO client connected:", socket.id);
 
-
-
-    socket.on("close", () => {
-        console.log("WebSocket client disconnected");
+    socket.on("disconnect", () => {
+        console.log("Socket.IO client disconnected:", socket.id);
     });
 });
+
 
 // Start server
 server.listen(PORT, () => {

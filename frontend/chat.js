@@ -2,23 +2,7 @@ const messageInput = document.getElementById("message-input");
 const sendButton = document.getElementById("send-button");
 const messages = document.getElementById("messages");
 
-const socket = new WebSocket("ws://localhost:5000");
 
-socket.addEventListener("open", () => {
-    console.log("WebSocket connected");
-});
-
-socket.addEventListener("message", (event) => {
-    const messageData = JSON.parse(event.data);
-
-
-
-    displayMessage(messageData);
-});
-
-socket.addEventListener("close", () => {
-    console.log("WebSocket disconnected");
-});
 
 function getCurrentUserId() {
     const token = localStorage.getItem("token");
@@ -46,9 +30,23 @@ function getCurrentUserId() {
     }
 }
 
-socket.addEventListener("error", (error) => {
-    console.error("WebSocket error:", error);
+
+// Socket.IO connection
+const socketIO = io("http://localhost:5000");
+
+socketIO.on("connect", () => {
+    console.log("Socket.IO connected:", socketIO.id);
 });
+
+socketIO.on("disconnect", () => {
+    console.log("Socket.IO disconnected");
+});
+
+socketIO.on("chat message", (messageData) => {
+    displayMessage(messageData);
+});
+
+
 
 function displayMessage(msg) {
 
