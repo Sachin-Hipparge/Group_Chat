@@ -62,6 +62,42 @@ const signup = async (req, res) => {
     }
 };
 
+// Check whether a user exists by email
+const checkUserByEmail = async (req, res) => {
+    try {
+        const { email } = req.query;
+
+        if (!email) {
+            return res.status(400).json({
+                message: "Email is required"
+            });
+        }
+
+        const [users] = await db.promise().execute(
+            "SELECT id, name, email FROM users WHERE email = ?",
+            [email]
+        );
+
+        if (users.length === 0) {
+            return res.status(404).json({
+                message: "User not found"
+            });
+        }
+
+        return res.status(200).json({
+            message: "User exists",
+            user: users[0]
+        });
+
+    } catch (error) {
+        console.error("Check user error:", error);
+
+        return res.status(500).json({
+            message: "Internal server error"
+        });
+    }
+};
+
 // Login controller
 const login = async (req, res) => {
     try {
@@ -129,5 +165,6 @@ return res.status(200).json({
 
 module.exports = {
     signup,
-    login
+    login,
+    checkUserByEmail
 };

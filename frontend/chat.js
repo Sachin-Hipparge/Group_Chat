@@ -1,7 +1,7 @@
 const messageInput = document.getElementById("message-input");
 const sendButton = document.getElementById("send-button");
 const messages = document.getElementById("messages");
-
+const recipientInput = document.getElementById("recipient-input");
 
 
 function getCurrentUserId() {
@@ -31,6 +31,100 @@ function getCurrentUserId() {
 }
 
 
+function getCurrentUserEmail() {
+    const token = localStorage.getItem("token");
+
+    if (!token) {
+        return null;
+    }
+
+    try {
+        const payload = token.split(".")[1];
+
+        const decodedPayload = JSON.parse(
+            atob(
+                payload
+                    .replace(/-/g, "+")
+                    .replace(/_/g, "/")
+            )
+        );
+
+        return decodedPayload.email;
+
+    } catch (error) {
+        console.error("Unable to decode user email:", error);
+        return null;
+    }
+}
+
+
+function getPrivateRoom(currentUserEmail, recipientEmail) {
+    return [currentUserEmail, recipientEmail]
+        .sort()
+        .join("-");
+}
+
+let currentRoom = null;
+
+async function joinPrivateRoom() {
+    const currentUserEmail = getCurrentUserEmail();
+    const recipientEmail = recipientInput.value.trim();
+
+    if (!currentUserEmail || !recipientEmail) {
+        return;
+    }
+
+    if (currentUserEmail === recipientEmail) {
+        alert("You cannot chat with yourself.");
+        return;
+    }
+
+    try {
+        const token = localStorage.getItem("token");
+
+        const response = await fetch(
+            `http://localhost:5000/api/auth/user?email=${encodeURIComponent(recipientEmail)}`,
+            {
+                method: "GET",
+                headers: {
+                    "Authorization": `Bearer ${token}`
+                }
+            }
+        );
+
+        const data = await response.json();
+
+        if (!response.ok) {
+            alert("User not found.");
+            return;
+        }
+
+        const roomName = getPrivateRoom(
+            currentUserEmail,
+            recipientEmail
+        );
+
+        if (currentRoom === roomName) {
+            return;
+        }
+
+        if (currentRoom) {
+            socketIO.emit("leave_room", currentRoom);
+        }
+
+        socketIO.emit("join_room", roomName);
+
+        currentRoom = roomName;
+
+        console.log("Joined private room:", roomName);
+
+    } catch (error) {
+        console.error("User verification error:", error);
+        alert("Unable to verify user.");
+    }
+}
+
+
 // Socket.IO connection
 const token = localStorage.getItem("token");
 
@@ -53,6 +147,12 @@ socketIO.on("connect_error", (error) => {
 });
 
 socketIO.on("chat message", (messageData) => {
+    displayMessage(messageData);
+});
+
+socketIO.on("new_message", (messageData) => {
+    console.log("Personal message received:", messageData);
+
     displayMessage(messageData);
 });
 
@@ -101,9 +201,24 @@ async function sendMessage() {
 
     const messageText = messageInput.value.trim();
 
+
+
     if (messageText === "") {
         return;
     }
+
+const currentUserEmail = getCurrentUserEmail();
+const recipientEmail = recipientInput.value.trim();
+
+if (!currentUserEmail || !recipientEmail) {
+    alert("Please enter a recipient email.");
+    return;
+}
+
+const roomName = getPrivateRoom(
+    currentUserEmail,
+    recipientEmail
+);
 
     const token = localStorage.getItem("token");
 
@@ -222,6 +337,8 @@ messageInput.addEventListener("keydown", function (event) {
     }
 
 });
+
+recipientInput.addEventListener("change", joinPrivateRoom);
 
 // Load previous messages when chat page opens
 loadMessages();
