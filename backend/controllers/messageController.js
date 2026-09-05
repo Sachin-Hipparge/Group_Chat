@@ -5,7 +5,7 @@ const sendMessage = async (req, res) => {
 
     try {
 
-        const { message } = req.body;
+        const { message, roomName } = req.body;
 
         const userId = req.user.id;
 
@@ -29,7 +29,11 @@ const sendMessage = async (req, res) => {
 );
 
 const io = req.app.get("io");
-io.emit("chat message", savedMessage[0]);
+
+io.to(roomName).emit(
+    "chat message",
+    savedMessage[0]
+);
 
         return res.status(201).json({
             message: "Message sent successfully",
