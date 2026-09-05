@@ -32,7 +32,13 @@ function getCurrentUserId() {
 
 
 // Socket.IO connection
-const socketIO = io("http://localhost:5000");
+const token = localStorage.getItem("token");
+
+const socketIO = io("http://localhost:5000", {
+    auth: {
+        token: token
+    }
+});
 
 socketIO.on("connect", () => {
     console.log("Socket.IO connected:", socketIO.id);
@@ -40,6 +46,10 @@ socketIO.on("connect", () => {
 
 socketIO.on("disconnect", () => {
     console.log("Socket.IO disconnected");
+});
+
+socketIO.on("connect_error", (error) => {
+    console.error("Socket.IO authentication error:", error.message);
 });
 
 socketIO.on("chat message", (messageData) => {
