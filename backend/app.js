@@ -8,6 +8,7 @@ const setupSocket = require("./socket-io");
 
 const authRoutes = require("./routes/authRoutes");
 const messageRoutes = require("./routes/messageRoutes");
+const mediaRoutes = require("./routes/mediaRoutes");
 
 const app = express();
 
@@ -16,6 +17,7 @@ app.use(express.json());
 
 app.use("/api/auth", authRoutes);
 app.use("/api/messages", messageRoutes);
+app.use("/api/media", mediaRoutes);
 
 const PORT = 5000;
 
