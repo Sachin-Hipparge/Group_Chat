@@ -5,6 +5,7 @@ const express = require("express");
 const cors = require("cors");
 const http = require("http");
 const setupSocket = require("./socket-io");
+require("./cron/archiveMessages");
 
 const authRoutes = require("./routes/authRoutes");
 const messageRoutes = require("./routes/messageRoutes");
